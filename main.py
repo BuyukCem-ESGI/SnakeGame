@@ -30,26 +30,18 @@ def main_run():
         main_snake.move()
         main_snake.check_eat(main_apple)
 
-        # PASASER CE CODE DANS LA CLASSE SNAKE
-        # snek_head = main_snake.snake_body[0]
-        main_snake.position_snake.append([main_snake.position_x, main_snake.position_y])
-        if len(main_snake.position_snake) > main_snake.snake_size:
-            main_snake.position_snake.pop(0)
-            #print(main_snake.position_x, main_snake.position_y)
+        if main_snake.check_collision():
+            sys.exit()
+        main_snake.add_position_snake()
 
         main_window.clear_window()
 
         main_apple.draw(main_window.window)
         main_snake.draw(main_window.window)
-        for snake_part in main_snake.position_snake[:-1]:
-            main_snake.draw(main_window.window, snake_part[0], snake_part[1])
-
 
         clock.tick(FPS)
         pygame.display.flip()
 
 if __name__ == "__main__":
-    WIDTH = 800
-    HEIGHT = 600
     game_run = True
     main_run()

@@ -1,5 +1,7 @@
 import pygame
 
+from global_var import WINDOW_WIDTH, WINDOW_HEIGHT
+
 class snake:
     def __init__(self):
         self._position_x = 300
@@ -67,19 +69,38 @@ class snake:
 
     def check_eat(self, apple):
         if (self.position_x == apple.position_x) and (self.position_y == apple.position_y):
-            self.snake_size += 1
+            self.snake_size += 20
             apple.random_position()
 
-    def draw(self, screen, *args):
-        if len(args) == 2:
-            pygame.draw.rect(screen,
-                         self.snake_color,
-                         (args[0], args[1], self.snake_body, self.snake_body))
-        elif len(args) == 0:
+    def add_position_snake(self):  # add snake head into body
+        self.position_snake.append([self.position_x, self.position_y])
+
+    def check_collision(self):
+
+        # si la position est supperieur a 1 alors on supprime le premier element
+        if len(self.position_snake) > self.snake_size:
+            self.position_snake.pop(0)
+            # print(main_snake.position_x, main_snake.position_y)
+
+        if (self.position_x < 0) or (self.position_x > WINDOW_WIDTH):
+            return True
+        elif (self.position_y < 0) or (self.position_y > WINDOW_HEIGHT):
+            return True
+        else:
+            for position in self.position_snake[:-1]:
+                if position[0] == self.position_x and position[1] == self.position_y:
+                    return True
+        return False
+
+    def draw(self, screen):
+        for snake_part in self.position_snake[:-1]:
             pygame.draw.rect(screen,
                              self.snake_color,
-                             (self.position_x, self.position_y, self.snake_body,
-                              self.snake_body))
+                             (snake_part[0], snake_part[1], self.snake_body, self.snake_body))
+        pygame.draw.rect(screen,
+                         self.snake_color,
+                         (self.position_x, self.position_y, self.snake_body,
+                          self.snake_body))
 
     direction_x = property(get_direction_x, set_direction_x)
     direction_y = property(get_direction_y, set_direction_y)
