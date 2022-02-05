@@ -35,11 +35,12 @@ def main_run():
                 print(event.key)
                 key = pygame.key.get_pressed()
                 if key[pygame.K_n]:
-                    listPlayer.append((Player("Player1"), snake("GREEN")))
+                    listPlayer.append((Player(), snake("GREEN")))
                     pygame.event.clear()
                     game_init = False
                     game_run_status = False
                     insert_name_status = True
+                    main_window.clear_window()
                     break
 
                 if key[pygame.K_y]:
@@ -54,10 +55,10 @@ def main_run():
             pygame.display.flip()
     i = 0
     while insert_name_status and i < len(listPlayer):
-        text = main_window.font.render('Entrer le nom du player {}'.format(i+1), True, (0, 255, 0), (0, 0, 255))
-        textRect = text.get_rect()
-        textRect.center = ((WINDOW_WIDTH // 2), ((WINDOW_HEIGHT // 2))-35)
-        main_window.window.blit(text, textRect)
+        text3 = main_window.font.render('Entrer le nom du player {}'.format(i + 1), True, (0, 255, 0), (0, 0, 255))
+        textRect3 = text3.get_rect()
+        textRect3.center = ((WINDOW_WIDTH // 2), ((WINDOW_HEIGHT // 2)) - 35)
+        main_window.window.blit(text3, textRect3)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -67,19 +68,27 @@ def main_run():
                     name += event.unicode
                 elif event.key == pygame.K_BACKSPACE:
                     name = name[:-1]
-                elif event.key == pygame.K_KP_ENTER:
+                    main_window.clear_window()
+                elif event.key == pygame.K_RETURN:
+                    main_window.clear_window()
+                    if (len(listPlayer) == 1):
+                        name = "SOLO_{}".format(name)
+                    if (len(listPlayer) == 2):
+                        name = "DUO_{}".format(name)
                     listPlayer[i][0].name = name
                     name = ""
+                    print(listPlayer[i][0].name)
                     i += 1
-                block = main_window.font.render(name, True, (0, 255, 0), (0, 0, 255))
-                rect = block.get_rect()
-                rect.center = ((WINDOW_WIDTH // 2), (WINDOW_HEIGHT // 2))
-                main_window.window.blit(block, rect)
 
-                print("hello")
-                pygame.display.flip()
+            block = main_window.font.render(name, True, (0, 255, 0), (0, 0, 255))
+            rect = block.get_rect()
+            rect.center = ((WINDOW_WIDTH // 2), (WINDOW_HEIGHT // 2))
+            main_window.window.blit(block, rect)
+            pygame.display.flip()
 
-
+            if (i == len(listPlayer)):
+                insert_name_status = False
+                game_run_status = True
 
     main_apple = apple()
     while game_run_status:
@@ -113,11 +122,22 @@ def main_run():
             listPlayer[0][1].check_eat(main_apple)
             listPlayer[1][1].check_eat(main_apple)
 
-            if listPlayer[1][1].check_collision() or listPlayer[0][1].check_collision():
-                sys.exit()
+            if listPlayer[1][1].check_collision():
+                listPlayer[1][0].score = -1
+                listPlayer[0][0].score = listPlayer[0][1].snake_size
+                listPlayer[1][0].is_GameOver = True
+            elif listPlayer[0][1].check_collision():
+                listPlayer[0][0].score = -1
+                listPlayer[0][0].is_GameOver = True
+                listPlayer[1][0].score = listPlayer[1][1].snake_size
+
+            if listPlayer[1][0].is_GameOver or listPlayer[0][0].is_GameOver:
+                game_run_status = False
+                game_over_status = True
 
             listPlayer[1][1].add_position_snake()
             listPlayer[0][1].add_position_snake()
+
             main_window.clear_window()
             listPlayer[1][1].draw(main_window.window)
             listPlayer[0][1].draw(main_window.window)
@@ -126,7 +146,12 @@ def main_run():
             listPlayer[0][1].move()
             listPlayer[0][1].check_eat(main_apple)
             if listPlayer[0][1].check_collision():
-                sys.exit()
+                listPlayer[0][0].score = -1
+                listPlayer[0][0].is_GameOver = True
+                listPlayer[0][0].score = listPlayer[0][1].snake_size
+                game_run_status = False
+                game_over_status = True
+
             listPlayer[0][1].add_position_snake()
             main_window.clear_window()
             listPlayer[0][1].draw(main_window.window)
@@ -135,6 +160,23 @@ def main_run():
 
         clock.tick(FPS)
         pygame.display.flip()
+
+    while game_over_status:
+        main_window.clear_window()
+        text_game_end = ""
+
+        for key, val in enumerate(listPlayer):
+            text_game_end += str(listPlayer[key][0])
+
+        text = main_window.font.render(text_game_end, True, (0, 255, 0), (0, 0, 255))
+        textRect = text.get_rect()
+        textRect.center = ((WINDOW_WIDTH // 2), (WINDOW_HEIGHT // 2))
+        main_window.window.blit(text, textRect)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
 
 
 if __name__ == "__main__":

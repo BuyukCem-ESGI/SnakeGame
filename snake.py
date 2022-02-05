@@ -71,22 +71,25 @@ class snake:
 
     def check_eat(self, apple):
         if (self.position_x == apple.position_x) and (self.position_y == apple.position_y):
-            self.snake_size += 10
+            self.snake_size += 3
             apple.random_position()
 
     def add_position_snake(self):  # add snake head into body
         self.position_snake.append([self.position_x, self.position_y])
 
     def check_collision(self):
-
         if (self.position_x < 0) or (self.position_x > WINDOW_WIDTH):
             return True
         elif (self.position_y < 0) or (self.position_y > WINDOW_HEIGHT):
             return True
         else:
+
             for position in self.position_snake[:-1]:
-                if position[0] == self.position_x and position[1] == self.position_y:
-                    return True
+                print(self.position_snake)
+                print(position,'||',self.position_x, self.position_y)
+                if position == [self.position_x, self.position_y]:
+                   print("detection de collision")
+                   return False
         return False
 
     def draw(self, screen):
