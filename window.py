@@ -8,6 +8,7 @@ class window:
 
         self._window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Pygame")
+        self.font = pygame.font.Font('FreeSansBold.ttf', 20)
         self.clear_window()
 
     def get_window(self):

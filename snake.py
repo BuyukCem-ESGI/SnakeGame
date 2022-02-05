@@ -1,11 +1,11 @@
 import pygame
-
-from global_var import WINDOW_WIDTH, WINDOW_HEIGHT
+import random
+from global_var import WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE
 
 class snake:
-    def __init__(self):
-        self._position_x = 300
-        self._position_y = 300
+    def __init__(self, color):
+        self._position_x = random.randrange(110, 690, GRID_SIZE)
+        self._position_y = random.randrange(110, 690, GRID_SIZE)
 
         self._direction_x = 0
         self._direction_y = 0
@@ -13,7 +13,9 @@ class snake:
         self._snake_body = 10
         self.snake_size = 1
         self.position_snake = []
-        self.snake_color = (0, 255, 0)
+
+
+        self.snake_color = pygame.Color(color)
 
     def get_position_x(self):
         return self._position_x
@@ -69,18 +71,13 @@ class snake:
 
     def check_eat(self, apple):
         if (self.position_x == apple.position_x) and (self.position_y == apple.position_y):
-            self.snake_size += 20
+            self.snake_size += 10
             apple.random_position()
 
     def add_position_snake(self):  # add snake head into body
         self.position_snake.append([self.position_x, self.position_y])
 
     def check_collision(self):
-
-        # si la position est supperieur a 1 alors on supprime le premier element
-        if len(self.position_snake) > self.snake_size:
-            self.position_snake.pop(0)
-            # print(main_snake.position_x, main_snake.position_y)
 
         if (self.position_x < 0) or (self.position_x > WINDOW_WIDTH):
             return True
@@ -93,6 +90,10 @@ class snake:
         return False
 
     def draw(self, screen):
+        # si la position est supperieur a 1 alors on supprime le premier element
+        if len(self.position_snake) > self.snake_size:
+            self.position_snake.pop(0)
+
         for snake_part in self.position_snake[:-1]:
             pygame.draw.rect(screen,
                              self.snake_color,
