@@ -49,19 +49,15 @@ class snake:
 
     def change_direction(self, direction):
         if direction == 'up':
-            print('up')
             self._direction_y = -10
             self._direction_x = 0
         elif direction == 'down':
-            print('down')
             self._direction_y = 10
             self._direction_x = 0
         elif direction == 'left':
-            print('left')
             self._direction_x = -10
             self._direction_y = 0
         elif direction == 'right':
-            print('right')
             self._direction_x = 10
             self._direction_y = 0
 
@@ -71,7 +67,7 @@ class snake:
 
     def check_eat(self, apple):
         if (self.position_x == apple.position_x) and (self.position_y == apple.position_y):
-            self.snake_size += 3
+            self.snake_size += 1
             apple.random_position()
 
     def add_position_snake(self):  # add snake head into body
@@ -83,14 +79,18 @@ class snake:
         elif (self.position_y < 0) or (self.position_y > WINDOW_HEIGHT):
             return True
         else:
-
             for position in self.position_snake[:-1]:
-                print(self.position_snake)
-                print(position,'||',self.position_x, self.position_y)
+                if position[0] == self.position_x and position[1] == self.position_y:
+                    return True
+            for position in self.position_snake[:-1]:
                 if position == [self.position_x, self.position_y]:
-                   print("detection de collision")
-                   return False
+                   return True
         return False
+
+    def check_collision_friend(self,snake):
+        for position in snake.position_snake:
+            if position == [self.position_x, self.position_y]:
+                return True
 
     def draw(self, screen):
         # si la position est supperieur a 1 alors on supprime le premier element
